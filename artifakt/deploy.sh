@@ -1,3 +1,3 @@
 #!/bin/sh
 
-composer install
+#composer install
