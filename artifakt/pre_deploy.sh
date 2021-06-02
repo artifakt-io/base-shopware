@@ -1,4 +1,15 @@
 #!/bin/sh
+currentDir=$(pwd)
+tail="${currentDir#/*/*/*/}"
+head="${currentDir%/$tail}"
+
+if [[ -f "$head/current/config/jwt/public.pem" ]] && [[ ! -f "/mnt/shared/config/jwt/public.pem" ]]; then
+   sudo cp $head/current/config/jwt/public.pem /mnt/shared/config/jwt/
+   sudo cp $head/current/config/jwt/private.pem /mnt/shared/config/jwt/
+   sudo chown -R apache:opsworks /mnt/shared/config/jwt
+   sudo chmod 600 -R /mnt/shared/config/jwt/public.pem
+   sudo chmod 600 -R /mnt/shared/config/jwt/private.pem
+fi
 
  if [[ $CLEAR_DATABASE -eq 1 ]]; then
     echo "Removing all tables"
