@@ -1,10 +1,10 @@
 #!/bin/sh
 currentDir=$(pwd)
 
-sudo sed -i "s/opcache.enable=1/opcache.enable=0/g" /srv/www/php74fpm/php.ini
-cd /srv/www/php74fpm/
-sudo docker-compose up -d --build
-cd $currentDir
+#sudo sed -i "s/opcache.enable=1/opcache.enable=0/g" /srv/www/php74fpm/php.ini
+#cd /srv/www/php74fpm/
+#sudo docker-compose up -d --build
+#cd $currentDir
 
 tail="${currentDir#/*/*/*/}"
 head="${currentDir%/$tail}"
