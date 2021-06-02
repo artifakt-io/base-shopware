@@ -1,5 +1,11 @@
 #!/bin/sh
 currentDir=$(pwd)
+
+sudo sed -i "s/opcache.enable=1/opcache.enable=0/g" /srv/www/php74fpm/php.ini
+cd /srv/www/php74fpm/
+sudo docker-compose up -d --build
+cd $currentDir
+
 tail="${currentDir#/*/*/*/}"
 head="${currentDir%/$tail}"
 
@@ -9,6 +15,10 @@ if [[ -f "$head/current/config/jwt/public.pem" ]] && [[ ! -f "/mnt/shared/config
    sudo chown -R apache:opsworks /mnt/shared/config/jwt
    sudo chmod 600 -R /mnt/shared/config/jwt/public.pem
    sudo chmod 600 -R /mnt/shared/config/jwt/private.pem
+fi
+
+if [[ -f "$head/current/.env" ]] && [[ ! $CLEAR_DATABASE -eq 1 ]]; then
+   sudo cp $head/current/.env .
 fi
 
  if [[ $CLEAR_DATABASE -eq 1 ]]; then
