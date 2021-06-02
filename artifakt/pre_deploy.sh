@@ -29,4 +29,6 @@ fi
     rm ./drop_all_tables.sql
  fi
 
+rm -rf var/cache/*
+bin/console cache:clear
 composer install
