@@ -78,6 +78,7 @@ else
                 sudo cp /mnt/shared/.env .
                 sudo chown apache:opsworks .env
                 sudo chmod 755 .env
+                touch install.lock
                 continue=0
             fi
         done
