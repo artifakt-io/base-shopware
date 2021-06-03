@@ -19,7 +19,9 @@ if [[ $CLEAR_DATABASE -eq 1 ]]; then
    IS_INSTALLED="false"
 fi
 
+echo "Is installed value: $IS_INSTALLED"
 if [[ "$IS_INSTALLED" == "true" ]]; then
+
    if [[ -f "$head/current/config/jwt/public.pem" ]] && [[ ! -f "/mnt/shared/config/jwt/public.pem" ]]; then
       sudo cp $head/current/config/jwt/public.pem /mnt/shared/config/jwt/
       sudo cp $head/current/config/jwt/private.pem /mnt/shared/config/jwt/
