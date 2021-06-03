@@ -49,28 +49,30 @@ if [[ $ARTIFAKT_IS_MAIN_INSTANCE -eq 1 ]]; then
         fi
     fi
 else
-    echo "Waiting 30 seconds if the env copy script is running plus the certificate copy"
-    sleep 30
-    maxWait=60
-    continue=1
-    counter=0
-    while [ $continue -eq 1 ] || [ $counter -ge $maxWait ]
-    do
-        if [[ ! -f "/mnt/shared/.env" ]]; then
-            echo "/mnt/shared/.env doesn't exists, waiting for main_instance to finish"
-            counter=$(($counter+5))
-            sleep 5
-        else
-            echo "File .env exists, continue"
-            sudo cp /mnt/shared/.env .
-            sudo chown apache:opsworks .env
-            sudo chmod 755 .env
-            continue=0
+    if [[ "$IS_INSTALLED" == "true" ]]; then
+        echo "Waiting 30 seconds if the env copy script is running plus the certificate copy"
+        sleep 30
+        maxWait=60
+        continue=1
+        counter=0
+        while [ $continue -eq 1 ] || [ $counter -ge $maxWait ]
+        do
+            if [[ ! -f "/mnt/shared/.env" ]]; then
+                echo "/mnt/shared/.env doesn't exists, waiting for main_instance to finish"
+                counter=$(($counter+5))
+                sleep 5
+            else
+                echo "File .env exists, continue"
+                sudo cp /mnt/shared/.env .
+                sudo chown apache:opsworks .env
+                sudo chmod 755 .env
+                continue=0
+            fi
+        done
+        if [ $counter -ge $maxWait ]; then
+            echo "Waited more than $maxWait, exit script."
+            exit 1
         fi
-    done
-    if [ $counter -ge $maxWait ]; then
-        echo "Waited more than $maxWait, exit script."
-        exit 1
     fi
 fi
 
