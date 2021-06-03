@@ -38,7 +38,7 @@ if [[ $ARTIFAKT_IS_MAIN_INSTANCE -eq 1 ]]; then
             sudo chmod 600 -R /mnt/shared/config/jwt/private.pem
         fi
 
-        if [[ -f "$head/current/.env" ]]; then
+        if [[ -f "$head/current/.env" ]] && [[ ! -f "/mnt/shared/.env" ]]; then
             echo "Put aside the .env file for all servers"
             sudo cp $head/current/.env /mnt/shared/
         fi
