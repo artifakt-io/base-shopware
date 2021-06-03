@@ -42,8 +42,8 @@ if [[ $ARTIFAKT_IS_MAIN_INSTANCE -eq 1 ]]; then
         if [[ -f "$head/current/config/jwt/public.pem" ]] && [[ ! -f "/mnt/shared/config/jwt/public.pem" ]]; then
             echo "Pem file found in current but not in shared, copying from $head/current/config/jwt/public.pem to /mnt/shared/config/jwt"
             mkdir -p /mnt/shared/config/jwt/
-            sudo cp $head/current/config/jwt/public.pem /mnt/shared/config/jwt/
-            sudo cp $head/current/config/jwt/private.pem /mnt/shared/config/jwt/
+            sudo cp -rf $head/current/config/jwt/public.pem /mnt/shared/config/jwt/
+            sudo cp -rf $head/current/config/jwt/private.pem /mnt/shared/config/jwt/
             sudo chown -R apache:opsworks /mnt/shared/config/jwt
             sudo chmod 600 -R /mnt/shared/config/jwt/public.pem
             sudo chmod 600 -R /mnt/shared/config/jwt/private.pem
@@ -53,7 +53,8 @@ if [[ $ARTIFAKT_IS_MAIN_INSTANCE -eq 1 ]]; then
             echo "Put aside the .env file for all servers"
             sudo cp $head/current/.env /mnt/shared/
         fi
-
+        sudo cp /mnt/shared/.env .
+       
         if [[ ! -f "install.lock" ]]; then
             echo "Create install.lock"
             touch install.lock
