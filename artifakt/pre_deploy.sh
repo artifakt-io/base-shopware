@@ -21,8 +21,8 @@ fi
 
 echo "Is installed value: $IS_INSTALLED"
 if [[ "$IS_INSTALLED" == "true" ]]; then
-
    if [[ -f "$head/current/config/jwt/public.pem" ]] && [[ ! -f "/mnt/shared/config/jwt/public.pem" ]]; then
+      echo "Pem file found in current but not in shared, copying from $head/current/config/jwt/public.pem to /mnt/shared/config/jwt"
       sudo cp $head/current/config/jwt/public.pem /mnt/shared/config/jwt/
       sudo cp $head/current/config/jwt/private.pem /mnt/shared/config/jwt/
       sudo chown -R apache:opsworks /mnt/shared/config/jwt
