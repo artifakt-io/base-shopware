@@ -15,6 +15,7 @@ fi
 
 if [[ "$IS_INSTALLED" == "false" ]]; then
     rm .env
+    rm install.lock
 fi
 
 if [[ $ARTIFAKT_IS_MAIN_INSTANCE -eq 1 ]]; then
