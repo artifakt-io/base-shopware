@@ -43,7 +43,7 @@ if [[ $ARTIFAKT_IS_MAIN_INSTANCE -eq 1 ]]; then
             sudo cp $head/current/.env /mnt/shared/
         fi
 
-        if [[ ! -f "install.lock" ]]]; then
+        if [[ ! -f "install.lock" ]]; then
             echo "Create install.lock"
             touch install.lock
         fi
