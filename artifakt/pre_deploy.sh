@@ -37,7 +37,7 @@ end
 
 composer install
 
-if [[ "$IS_INSTALLED" == "true "]]; then
+if [[ "$IS_INSTALLED" == "true" ]]; then
    bin/console cache:clear
    rm -rf var/cache/*
    bin/console theme:compile --env=prod
