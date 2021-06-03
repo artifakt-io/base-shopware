@@ -33,7 +33,7 @@ if [[ "$IS_INSTALLED" == "true" ]]; then
       rm .env
       sudo cp $head/current/.env .
    fi
-end
+fi
 
 composer install
 
