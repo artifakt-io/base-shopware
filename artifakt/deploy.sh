@@ -13,6 +13,10 @@ if [[ $CLEAR_DATABASE -eq 1 ]]; then
     IS_INSTALLED="false"
 fi
 
+if [[ "$IS_INSTALLED" == "false" ]]; then
+    rm .env
+fi
+
 if [[ $ARTIFAKT_IS_MAIN_INSTANCE -eq 1 ]]; then
    if [[ $CLEAR_DATABASE -eq 1 ]]; then
       echo "Removing all tables"
@@ -21,6 +25,11 @@ if [[ $ARTIFAKT_IS_MAIN_INSTANCE -eq 1 ]]; then
       mysql -u $MYSQL_USER -h 127.0.0.1 -p$MYSQL_PASSWORD $MYSQL_DATABASE_NAME < ./drop_all_tables.sql
       rm ./drop_all_tables.sql
       
+      if [[ -f "/mnt/shared/.env" ]]; then
+        echo "Remove the .env file"
+        sudo rm /mnt/shared/.env
+      fi
+
       echo "Deleting certificates private and public in shared directory"
       sudo rm mnt/shared/config/jwt/*
    fi
