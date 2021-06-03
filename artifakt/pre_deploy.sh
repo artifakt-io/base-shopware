@@ -47,6 +47,8 @@ if [[ $ARTIFAKT_IS_MAIN_INSTANCE -eq 1 ]]; then
             sudo chown -R apache:opsworks /mnt/shared/config/jwt
             sudo chmod 600 -R /mnt/shared/config/jwt/public.pem
             sudo chmod 600 -R /mnt/shared/config/jwt/private.pem
+            mkdir -p config/jwt
+            sudo ln -s /mnt/shared/config/jwt config/jwt
         fi
 
         if [[ -f "$head/current/.env" ]] && [[ ! -f "/mnt/shared/.env" ]]; then
