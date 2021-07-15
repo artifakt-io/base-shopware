@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use PhpCsFixer\Fixer\Basic\NonPrintableCharacterFixer;
 use PhpCsFixer\Fixer\CastNotation\ModernizeTypesCastingFixer;
 use PhpCsFixer\Fixer\ClassNotation\ClassAttributesSeparationFixer;
 use PhpCsFixer\Fixer\ClassNotation\SelfAccessorFixer;
@@ -15,6 +16,7 @@ use PhpCsFixer\Fixer\Operator\ConcatSpaceFixer;
 use PhpCsFixer\Fixer\Operator\OperatorLinebreakFixer;
 use PhpCsFixer\Fixer\Phpdoc\GeneralPhpdocAnnotationRemoveFixer;
 use PhpCsFixer\Fixer\Phpdoc\NoSuperfluousPhpdocTagsFixer;
+use PhpCsFixer\Fixer\Phpdoc\PhpdocIndentFixer;
 use PhpCsFixer\Fixer\Phpdoc\PhpdocLineSpanFixer;
 use PhpCsFixer\Fixer\Phpdoc\PhpdocOrderFixer;
 use PhpCsFixer\Fixer\Phpdoc\PhpdocSummaryFixer;
@@ -46,13 +48,6 @@ use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
 
 return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
-
-    $containerConfigurator->import(SetList::SYMFONY);
-    $containerConfigurator->import(SetList::SYMFONY_RISKY);
-    $containerConfigurator->import(SetList::ARRAY);
-    $containerConfigurator->import(SetList::CONTROL_STRUCTURES);
-    $containerConfigurator->import(SetList::STRICT);
-    $containerConfigurator->import(SetList::PSR_12);
 
     $services->set(ModernizeTypesCastingFixer::class);
     $services->set(ClassAttributesSeparationFixer::class)
@@ -98,14 +93,17 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(NoUselessStrlenFixer::class);
 
     $parameters = $containerConfigurator->parameters();
-    $parameters->set(Option::PATHS, [
-        'src',
-        '.gitlab-ci/tools/src',
-        '.gitlab-ci/tools/tests',
-        'public/index.php',
-        'easy-coding-standard.php',
-        'bin/console',
+
+    $parameters->set(Option::SETS, [
+        SetList::SYMFONY,
+        SetList::SYMFONY_RISKY,
+        SetList::ARRAY,
+        SetList::CONTROL_STRUCTURES,
+        SetList::STRICT,
+        SetList::PSR_12,
     ]);
+    $parameters->set(Option::CACHE_DIRECTORY, 'var/cache/cs_fixer');
+    $parameters->set(Option::CACHE_NAMESPACE, 'platform');
 
     $parameters->set(Option::SKIP, [
         ArrayOpenerAndCloserNewlineFixer::class => null,
@@ -117,8 +115,13 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         PhpdocSummaryFixer::class => null,
         ExplicitStringVariableFixer::class => null,
         StandaloneLineInMultilineArrayFixer::class => null,
-        PhpCsFixer\Fixer\Phpdoc\NoSuperfluousPhpdocTagsFixer::class => [
-            __DIR__ . '/.gitlab-ci/tools/src/Service/ProcessBuilder.php',
-        ],
+        // would otherwise destroy the example in the annotation
+        NoUselessCommentFixer::class => ['src/Core/System/Annotation/Concept/DeprecationPattern/ReplaceDecoratedInterface.php'],
+        // Would otherwise fix the blocking whitespace in the currency formatter tests
+        NonPrintableCharacterFixer::class => ['src/Core/System/Test/Currency/CurrencyFormatterTest.php'],
+        // skip php files in node modules (stylelint ships both js and php)
+        '**/node_modules',
+        // would otherwise destroy markdown in the description of a route annotation, since markdown interpreted spaces/indents
+        PhpdocIndentFixer::class => null
     ]);
 };

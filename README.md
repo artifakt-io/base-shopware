@@ -1,256 +1,313 @@
-# Shopware 6 production template
+<div align="center">
 
-This repository contains the production template that enables you to build,
-package and deploy Shopware 6 to production shops. This template is also used
-to build the official packages distributed by shopware at [https://www.shopware.com/en/download](https://www.shopware.com/en/download).
+[![Build Status](https://github.com/shopware/platform/workflows/PHPUnit/badge.svg)](https://github.com/shopware/platform/actions)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shopware/platform/badges/quality-score.png)](https://scrutinizer-ci.com/g/shopware/platform/)
+[![Latest Stable Version](https://poser.pugx.org/shopware/platform/v/stable)](https://packagist.org/packages/shopware/platform)
+[![Total Downloads](https://poser.pugx.org/shopware/platform/downloads)](https://packagist.org/packages/shopware/platform)
+[![License](https://img.shields.io/github/license/shopware/platform.svg)](https://github.com/shopware/platform/blob/master/license.txt)
+[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/shopware/platform.svg)](https://github.com/shopware/platform/pulls)
+[![Slack](https://img.shields.io/badge/chat-on%20slack-%23ECB22E)](https://slack.shopware.com?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Development Template](https://img.shields.io/badge/start%20with-shopware%2Fdevelopment-blue.svg)](https://github.com/shopware/development)
 
-This template is optimized for production usage and contains basic development tooling. 
-It's intended as a basis for project customizations, which are usually done by agencies.
-
-If you want to contribute to the [Shopware Platform](https://github.com/shopware/platform) or develop store plugins, 
-you should use the [development template](https://github.com/shopware/development).
-
-## Branches and stability
-
-In each commit a composer.lock is contained to ensure that the version being
-deployed is the version that was tested in our CI. We currently provide the following
-branches:
-- `6.3`: stable minor and patch releases (`v6.3.0.0-rc2`, `v6.3.0.1`, `v6.3.1.0`, `v6.1.*`, but not `v6.4.0.0`)
-- `master`: stable major, minor and patch releases (`v6.3.0.0`, `v6.3.1.0`, `v6.4.0.0`, `v6.5.0.0`...)
-
-The `6.3` branch contains all the 6.3 releases. It's stable now and only gets non-breaking changes. (security issues are an exception).
-
-The `master` branch contains the newest stable release, including major releases. That may result in plugins being incompatible, so be careful.
-
-Starting with `6.3.0.0`, we use a slightly modified version of SemVer. The pattern looks like this: 6.MAJOR.MINOR.PATCH. Examples:
-* 6.3.2.5 - Major=3, Minor=2, Patch=5
-* 6.4.1.0 - Major=4, Minor=1, Patch=0
-
-See also: https://www.shopware.com/en/news/shopware-6-versioning-strategy/
-
-## Requirements
-
-See [https://docs.shopware.com/en/shopware-platform-dev-en/getting-started/requirements](https://docs.shopware.com/en/shopware-platform-dev-en/getting-started/requirements)
-
-NPM and Node are only required during the build process and for development. If you don't have javascript customizations it's not required at all because the storefront and admin are prebuilt.
-
-If you are using a separate build server, consider having NPM and Node as build-only requirements. Your operating application server doesn't require any of these to run Shopware 6.
-
-## Setup and install
-
-To set up the environment and install with a basic setup run the following commands:
-
-```bash
-# clone the newest patch version from github 
-git clone --branch=[current version] https://github.com/shopware/production shopware
-cd shopware
-
-# install shopware and dependencies according to the composer.lock 
-composer install
-
-# setup the environment
-bin/console system:setup
-# or create .env yourself, if you need more control
-# create jwt secret: bin/console system:generate-jwt-secret
-# create app secret: APP_SECRET=$(bin/console system:generate-app-secret)
-# create .env
-
-# create database with a basic setup (admin user and storefront sales channel)
-bin/console system:install --create-database --basic-setup
-
-# or use the interactive installer in the browser: /recovery/install/index.php
-```
-
-## Update
-
-To update Shopware 6 just run this:
-
-```bash
-# pull newest changes from origin
-git pull origin
-
-# the (pre|post)-(install|update)-cmd will execute all steps automatically
-composer install
-```
-
-# Customization
-
-This project is called production template because it can be used to 
-create project specific configurations. The template provides a basic setup
-that is equivalent to the official distribution. If you need customization,
-the workflow could look like this:
-* Fork template
-* Make customization
-* Add dependencies
-* Add project specific plugins
-* Update var/plugins.json (bin/console bundle:dump, paths need to be relative to the project root)
-* Build administration/storefront
-* Update composer.json and composer.lock
-* Commit changes
-
-## Development
-
-### Command overview
-
-The following commands and scripts are available
-
-**Setup/Install/Deployment**
-
-|Command|Description|
-|---|---|
-| `bin/console system:setup` | Configure and create .env and optionally create jwt secret |
-| `bin/console system:generate-jwt-secret` | Generates a new jwt secret |
-| `bin/console system:generate-app-secret` | Outputs a new app secret. This does not update your .env! |
-| `bin/console system:install` | Setup database and optional install some basic data |
-| `bin/console system:update:prepare` | Run update preparations before the update. Do not update if this fails |
-| `bin/console system:update:finish` | Executes the migrations and finishes the update |
-| `bin/console theme:change` | Assign theme to a sales channel |
+</div>
 
 
-**Build**
+<p align="center"><a href="https://shopware.com" target="_blank" rel="noopener noreferrer"><img width="250" src="https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/swlogo_x250.png"></a></p>
 
-*bash is required for the shell scripts* 
+<h1 align="center">Shopware 6</h1>
 
-|Command|Description|
-|---|---|
-| `bin/console theme:compile` | Compile all assigned themes |
-| `bin/build.sh` | Complete build including composer install|
-| `bin/build-js.sh` | Build administration and storefront, including all plugins in `var/plugins.json`.|
-| `bin/build-administration.sh` | Just build the administration. |
-| `bin/build-storefront.sh` | Just build the storefront. You need to have built the administration once. |
+<p align="center"><strong>Realize your ideas - fast and without friction.</strong>
 
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Start%20your%20dev%20journey%20now!&url=https%3A%2F%2Fgithub.com%2Fshopware%2Fplatform&via=ShopwareDevs&hashtags=Shopware6,community)
+</p>
 
-**Dev**
+Shopware 6 is an open source ecommerce platform based on a quite modern technology stack that is powered by [Symfony](https://symfony.com) and [Vue.js](https://vuejs.org).
+It's the successor of the very successful ecommerce shopping cart [Shopware 5](https://github.com/shopware/shopware) which has over 800,000 downloads.
+Shopware 6 is focused on an API-first approach, so it's quite easy to think in different sales channels and make ecommerce happen whereever you want it.
 
-Run `bin/build-js.sh` once to install the npm dependencies. 
+If you like Shopware 6, give us a star on Github ★
 
-*bash is required for the shell scripts* 
+- **Read the docs**: [https://docs.shopware.com/](https://docs.shopware.com/)
+- **Start developing**: [https://github.com/shopware/development](https://github.com/shopware/development)
+- **File an issue**: [https://issues.shopware.com](https://issues.shopware.com)
 
-|Command|Description|
-|---|---|
-| `bin/console theme:refresh` | Reload theme.json of active themes |
-| `bin/watch-administration.sh` | Watcher for administration changes, recompile and reload page if required  |
-| `bin/watch-storefront.sh` | Watcher for storefront changes, recompile and reload page if required  |
+## Table of contents
 
-## Configuration
+- [Take a glimpse](#take-a-glimpse)
+- [Technology](#technology)
+- [Repository structure](#shopware-6-repository-structure)
+- [Installation](#quickstart--installation)
+- [Roadmap](#roadmap)
+- [Community](#community)
+- [Ecosystem](#ecosystem)
+- [Contribution](#contribution)
+- [License](#license)
+- [Authors](#authors)
 
-See also [config/README.md](config/README.md)
+## Take a glimpse
 
-### Template overview
+The **Shopware 6 Storefront** is based on [Twig](https://twig.symfony.com/doc/2.x/templates.html)
+and [Bootstrap](https://getbootstrap.com/docs/4.3/getting-started/introduction/).
+Two well known and easy to learn frameworks, making the creation of templates a breeze! 
 
-This directory tree should give an overview of the template structure.
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/storefrontT.png)](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/storefront.png)
 
-```txt
-├── bin/                  # binaries to setup, build and run symfony console commands 
-├── composer.json         # defines dependencies and setups autoloading
-├── composer.lock         # pins all dependencies to allow for reproducible installs
-├── config                # contains application configuration
-│   ├── bundles.php       # defines static symfony bundles - use plugins for dynamic bundles
-│   ├── etc/              # contains the configuration of the docker image
-│   ├── jwt/              # secrets for generating jwt tokens - DO NOT COMMIT these secrets
-│   ├── packages/         # configure packages - see: config/README.md
-│   ├── secrets/          # symfony secrets store - DO NOT COMMIT these secrets
-│   ├── services/         # contains some default overrides
-│   ├── services.xml      # just imports the default overrides - this file should not change
-│   └── services_test.xml # just imports the default overrides for tests
-├── custom                # contains custom files
-│   ├── plugins           # store plugins
-│   ├── static-plugins    # static project specific plugins
-├── docker-compose.yml    # example docker-compose
-├── Dockerfile            # minimal docker image
-├── phpunit.xml.dist      # phpunit config
-├── public                # should be the web root
-│   ├── index.php         # main entrypoint for the web application
-├── README.md             # this file
-├── src
-│   ├── Command/*
-│   ├── Kernel.php        # our kernel extension
-│   └── TestBootstrap.php # required to run unit tests
-└── var
-    ├── log/              # log dir
-    |── cache/            # cache directory for symfony
-    └── plugins.json      # javascript build configuration
-```
+The **Shopware 6 Administration** is based on [Vue.js](https://vuejs.org/v2/guide/) and [twig.js](https://github.com/twigjs/twig.js/wiki),
+making the creation of new modules fast and easy.
+Get started with the [design documentation](https://shopware.design/).   
 
-## Managing Dependencies
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/rulebuilder.gif)](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/rulebuilder.gif)
 
-### Composer
+The Rulebuilder makes the implementation of business processes easy.
 
-You only need to require the things you want. If you only want to run shopware 6 in headless mode, your composer.json could look like this:
+---
 
-```json
-{
-    "name": "acme/shopware-production",
-    "type": "project",
-    "license": "MIT",
-    "config": {
-        "optimize-autoloader": true
-    },
-    "prefer-stable": true,
-    "minimum-stability": "stable",
-    "autoload": {
-        "psr-4": {
-            "Shopware\\Production\\": "src/"
-        }
-    },
-    "require": {
-        "php": "~7.4",
-        "composer/package-versions-deprecated": "^1.8.0",
-        "shopware/core": "~v[current version]"
-    }
-}
-```
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/shoppingexp.gif)](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/shoppingexp.gif)
 
-### Require project plugins
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/cms.gif)](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/cms.gif)
 
-If you have project specific plugins, place them under `custom/static-plugins/{YourPlugin}` and require them in your `composer.json`.
+Designing content is fast and intuitive with the Shopping Experiences.
 
-Note: The plugins needs a (stable) version to work with the default stability `stable`.
+---
+
+## Technology
+
+Shopware 6 provides Services through REST-APIs and rich user interfaces to customers and administrators alike.
+
+![The core architecture](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/platformcontext.svg)
+
+The chart shows how the Shopware Platform fits into your enterprise.
+It provides web frontends for management and for commerce through a multitude of sales channels.
+It comes with a set of user facing interfaces and provides the ability to connect to your own infrastructure and outside services through REST-APIs.
+
+More information can be found [in the documentation](https://docs.shopware.com/en/shopware-platform-dev-en/internals).
+
+## Shopware 6 repository structure
+
+Shopware 6 consists of multiple repositories, two of them are important to you:
+
+- `shopware/platform` is a [mono repository](https://www.atlassian.com/git/tutorials/monorepos)
+  - This is where the shopware core is developed. You need it as dependency in your projects
+  - This is where you can participate in the development of Shopware through pull requests 
+  - It's split into multiple repositories for production setups, all read-only
+- [`shopware/development`](https://github.com/shopware/development) is the development template
+  - **This is where your journey with shopware starts**
+  - Installation see below!
+
+## Quickstart / Installation
+
+A full installation guide covering different dev environments is available in the [docs](https://docs.shopware.com/en/shopware-platform-dev-en/system-guide/installation).
+
+*For the impatient reader, here is a tl;dr using docker.*
+
+Let's start by cloning the development template:
 
 ```bash
-composer require "exampleorg/myplugin"
+> git clone git@github.com:shopware/development.git
 ```
 
-External plugins in private repositories can also be required by adding the repository to your composer.json.
+You now have the application template for the Shopware Platform in the directory `development`, we now change into it:
 
-See [Using private repositories](https://getcomposer.org/doc/05-repositories.md#using-private-repositories)
-
-### Update shopware packages
-
-Run the following command, to update all shopware dependencies:
 ```bash
-composer update "shopware/*"
+> cd development
 ```
 
-# Deployment
+Only if you want to work with the Shopware platform code itself, e.g. in order to create a pull request for it, you should clone the platform code manually. Before doing so, empty the existing platform directory.
 
-## Docker
-
-The `DOCKERFILE` and docker-compose.yml service definitions should work but are still experimental.
-
-
-## Storage and caches
-
-The following directories should be shared by all app servers:
-
-```txt
-.
-├── config
-│   ├── jwt # ro - should be written on first deployment
-│   ├── secrets # rw shared - For usage refer to: https://symfony.com/blog/new-in-symfony-4-4-encrypted-secrets-management 
-├── public
-│   ├── bundles # rw shared - Written by `assets:install` / `theme:compile`, can also be initiated by the administration
-│   ├── media # rw shared
-│   ├── theme # rw shared - generated themes by `theme:compile/change`
-│   └── thumbnail # rw shared - media thumbnails
-│   └── sitemap # rw shared - generated sitemaps
-├── var
-│   ├── cache # rw local - contains the containers which contain additional cache directories (twig, translations, etc)
-│   ├── log # a - append only, can be changed in the monolog config
-
-ro - Readonly after deployment
-rw shared - read and write access, it should be shared across the app servers
-rw local - local read and write access
+```bash
+> rm platform/.gitkeep
+> git clone git@github.com:shopware/platform
+> git checkout @ platform/.gitkeep
 ```
 
-Some of these directories like `public` can also be changed to a different flysystem to host the files on s3 for example.
+Build and start the containers:
+
+```bash
+> ./psh.phar docker:start
+```
+
+Access the application container:
+
+```bash
+> ./psh.phar docker:ssh
+```
+
+Execute the installer:
+
+```bash
+> ./psh.phar install 
+```
+
+This may take a while since many caches need to be generated on first execution, but only on first execution.
+
+To be sure that the installation succeeded, just open the following URL in your favorite browser: [localhost:8000](http://localhost:8000/)
+
+[Now you're all set to start developing your first plugin.](https://docs.shopware.com/en/shopware-platform-dev-en/internals/plugins/plugin-quick-start?category=shopware-platform-dev-en/internals/plugins)
+
+## Roadmap
+
+### You make the roadmap!
+
+Shopware 6 will continue to evolve together with you and your feedback. This is our number one priority!
+
+With openness as one of our core values, we will always provide you with a transparent overview of our product development.   
+The Shopware Roadmap shows you what we are working on, what we want to tackle next, and what visions we have for the future.
+
+[Take a look at the current roadmap here.](https://shopware.com/en/roadmap/)
+
+## Our community is our strongest asset
+
+In today’s information-based world, you cannot thrive in closed systems. Black boxes and vendor lock-in models hurt innovation – and belong in the dark ages of ecommerce.
+
+The future of IT is all about collaboration. At Shopware, we believe that the best ecommerce solution can only be developed in constant exchange with the people that use it every day. This is why we made a clear promise to the open source approach and embrace everyone willing to participate. We consider our community to be our greatest strength; not our competitor, like many companies tend to do.
+
+We believe that our open source edition is our strongest asset and that we need, now more than ever, to invest in our ecosystem of partners and developers. So that we can work together to collaborate across backgrounds, experiences and ideas and mutually benefit from the software that results.
+ 
+**Join the community now** 🖤
+
+- **Discuss:** [forum.shopware.com](https://forum.shopware.com/categories/international)
+- **Slack:** [slack.shopware.com](https://slack.shopware.com)
+- **Follow us on Twitter:** [@ShopwareDevs](https://twitter.com/ShopwareDevs)
+
+Subscribe to our **[developer newsletter](https://www.shopware.com/en/community/developers/#newsletter)** and get updates about:
+
+- Releases
+- Upcoming breaking changes
+- Important documentation changes and updates
+- Community events
+- Relevant blog articles
+
+[Subscribe now](https://www.shopware.com/en/community/developers/#newsletter)
+
+### Give us feedback
+
+<table>
+  <tr>
+    <td width="250"><img src="https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/mnaczenski.png" /></td>
+    <td>
+      <strong>Moritz Naczenski</strong><br>
+      Community Manager<br>
+      Twitter: <a href="https://twitter.com/m_naczenski">@m_naczenski</a>
+    </td>
+    <td width="250"><img src="https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/ndzoesch.png" /></td>  
+    <td>
+      <strong>Niklas Dzösch</strong><br>
+      Developer Evangelist<br>
+      <a href="mailto:developer@shopware.com">developer@shopware.com</a><br>
+      Twitter: <a href="https://twitter.com/ndzoesch">@ndzoesch</a>
+      </td>
+    </tr>
+</table>
+
+## Ecosystem
+
+Our Shopware Ecosystem gives you all the information you need to dive deep into the Shopware universe.
+ 
+### Shopware Community Store
+
+Whether plugin, theme or marketing tool: You can easily extend the functionality of your shop with over 3,500 available plugins in the Community Store.
+ 
+[store.shopware.com](https://store.shopware.com)
+
+### Academy
+
+Do you want to become a Shopware expert or get a sneak peek into the software? Find a training session that is individually tailored to your interests.
+ 
+[shopware.com/academy/](https://www.shopware.com/academy/)
+ 
+### Shopware Community Day
+
+Held annually, the Shopware Community Day informs ecommerce enthusiasts from across Europe about the current state - and future - of digital commerce.
+ 
+[scd.shopware.com](https://scd.shopware.com)
+
+## Contribution
+
+First of all - Every contribution is meaningful, so thank you for participating.
+
+You want to participate in the development of Shopware? There are many ways to contribute:
+
+-   Submitting pull requests
+-   Reporting issues on the [issue tracker](https://issues.shopware.com/)
+-   Discuss shopware on e.g [Slack](https://slack.shopware.com) or our [forum](https://forum.shopware.com/categories/shopware-6)
+- Write a translation for shopware on [crowdin](https://crowdin.com/project/shopware6) 
+
+You have a question regarding contribution, or you want to contribute in another way?
+
+Please write us an email: contributors@shopware.com
+
+### Code Contribution
+
+If you have decided to contribute code to Shopware and become a member of the Shopware community,
+we appreciate your hard work and want to handle it with the most possible respect.
+To ensure the quality of our code and our products we have created a guideline we all should endorse to.
+It helps you and us to collaborate. Following these guidelines will help us to integrate your changes in our daily workflow. 
+
+Read more in [our contribution guideline](https://docs.shopware.com/en/shopware-platform-dev-en/contribution/contribution-guideline)
+or in our short [HowTo contribute code](https://docs.shopware.com/en/shopware-platform-dev-en/contribution/contributing-code).
+
+### The Shopware CLA
+
+When submitting your code to Shopware you automatically need to sign our CLA (Contributor License Agreement).
+This CLA ensures that Shopware will stay an open and living product.
+In short, you give the explicit right to use your code in Shopware to shopware AG.
+
+## Reporting security issues
+Please have a look at our [security policy](SECURITY.md).
+
+## License
+
+Shopware 6 is completely free and released under the [MIT License](LICENSE).
+
+## Authors
+
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/OliverSkroblin.png)](https://github.com/OliverSkroblin)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/janbuecker.png)](https://github.com/janbuecker)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/klarstil.png)](https://github.com/klarstil)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/tobiasberge.png)](https://github.com/tobiasberge)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/jenskueper.png)](https://github.com/jenskueper)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/SebastianFranze.png)](https://github.com/SebastianFranze)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/leichteckig.png)](https://github.com/leichteckig)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/mitelg.png)](https://github.com/mitelg)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/Phil23.png)](https://github.com/Phil23)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/keulinho.png)](https://github.com/keulinho)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/benjamin-ott.png)](https://github.com/benjamin-ott)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/JanPietrzyk.png)](https://github.com/JanPietrzyk)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/taltholtmann.png)](https://github.com/taltholtmann)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/arnoldstoba.png)](https://github.com/arnoldstoba)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/HoelShare.png)](https://github.com/HoelShare)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/emmer91.png)](https://github.com/emmer91)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/ssltg.png)](https://github.com/ssltg)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/marcelbrode.png)](https://github.com/marcelbrode)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/pantrtxp.png)](https://github.com/pantrtxp)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/Staff-d.png)](https://github.com/Staff-d)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/PaddyS.png)](https://github.com/PaddyS)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/Christian-Rades.png)](https://github.com/Christian-Rades)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/azoffmann.png)](https://github.com/azoffmann)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/seggewiss.png)](https://github.com/seggewiss)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/lukasrump.png)](https://github.com/lukasrump)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/renebitter.png)](https://github.com/renebitter)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/swDennis.png)](https://github.com/swDennis)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/uehler.png)](https://github.com/uehler)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/htkassner.png)](https://github.com/htkassner)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/rsenf.png)](https://github.com/rsenf)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/GitEvil.png)](https://github.com/GitEvil)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/kevinrudde.png)](https://github.com/kevinrudde)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/Sironheart.png)](https://github.com/Sironheart)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/jennifer-utz.png)](https://github.com/jennifer-utz)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/oktupol.png)](https://github.com/oktupol)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/svenfinke.png)](https://github.com/svenfinke)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/florianklockenkemper.png)](https://github.com/florianklockenkemper)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/teiling88.png)](https://github.com/teiling88)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/jeboehm.png)](https://github.com/jeboehm)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/elkmod.png)](https://github.com/elkmod)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/Crease29.png)](https://github.com/Crease29)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/EtienneBruines.png)](https://github.com/EtienneBruines)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/Haehnchen.png)](https://github.com/Haehnchen)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/King-of-Babylon.png)](https://github.com/King-of-Babylon)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/niklasbuechner.png)](https://github.com/niklasbuechner)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/svenmuennich.png)](https://github.com/svenmuennich)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/screeny05.png)](https://github.com/screeny05)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/fabianhueske.png)](https://github.com/fabianhueske)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/hanneswernery.png)](https://github.com/hanneswernery)
+[![](https://s3.eu-central-1.amazonaws.com/shopware-platform-assets/github-platform/readme/avatars/hlohaus.png)](https://github.com/hlohaus)
