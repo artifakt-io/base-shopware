@@ -1,0 +1,9 @@
+{% block sw_admin %}
+<div id="app">
+    <sw-notifications ref="notifications" />
+    <sw-duplicated-media-v2 v-if="isLoggedIn" />
+    <router-view />
+    <sw-settings-cache-modal v-if="isLoggedIn" />
+    <sw-license-violation />
+</div>
+{% endblock %}

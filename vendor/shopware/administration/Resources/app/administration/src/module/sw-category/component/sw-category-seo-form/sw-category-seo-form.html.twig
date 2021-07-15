@@ -1,0 +1,33 @@
+{% block sw_category_seo_form %}
+<div class="sw-category-seo-form">
+    {% block sw_category_seo_form_meta_title %}
+    <sw-field
+        v-model="category.metaTitle"
+        type="text"
+        :disabled="!acl.can('category.editor')"
+        :label="$tc('sw-category.base.seo.labelMetaTitle')"
+        :placeholder="$tc('sw-category.base.seo.placeholderMetaTitle')"
+    />
+    {% endblock %}
+
+    {% block sw_category_seo_form_meta_description %}
+    <sw-field
+        v-model="category.metaDescription"
+        type="textarea"
+        :disabled="!acl.can('category.editor')"
+        :label="$tc('sw-category.base.seo.labelMetaDescription')"
+        :placeholder="$tc('sw-category.base.seo.placeholderMetaDescription')"
+    />
+    {% endblock %}
+
+    {% block sw_category_seo_form_keywords %}
+    <sw-field
+        v-model="category.keywords"
+        type="text"
+        :disabled="!acl.can('category.editor')"
+        :label="$tc('sw-category.base.seo.labelKeywords')"
+        :placeholder="$tc('sw-category.base.seo.placeholderKeywords')"
+    />
+    {% endblock %}
+</div>
+{% endblock %}
