@@ -1,41 +1,42 @@
-version: '3.7'
+version: '3'
+
 
 services:
-  app:
-    image: shopware/development:7.4-composer-2
-    depends_on: [database]
-    tmpfs:
-      - /tmp:mode=1777
-    volumes:
-      - .:/app
-    ports: [8000]
-
   database:
-    image: mariadb:10.4
-    ports: [3306]
-    tmpfs:
-      - /var/lib/mysql:uid=999,gid=999
+    image: mysql/mysql-server:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - datadir:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_PASSWORD: root
-
-  adminer:
-      image: adminer:latest
-      depends_on: [database]
-      environment:
-          ADMINER_DEFAULT_SERVER: database
-      ports: [ 8080 ]
-
-  mailer:
-    image: mailhog/mailhog
-    ports: [8025]
-
-  elasticsearch:
-    image: elasticsearch:7.3.0
-    ports: [9200]
+      MYSQL_DATABASE: ${ARTIFAKT_MYSQL_DATABASE_NAME}
+      MYSQL_USER: ${ARTIFAKT_MYSQL_USER}
+      MYSQL_PASSWORD: ${ARTIFAKT_MYSQL_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: "true"
+    ports:
+      - "3306:3306"
+      
+  app:
+    build: .
+    image: base-symfony
+    ports:
+      - "80:80"
+    volumes:
+      - data:/data
     environment:
-        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        - discovery.type=single-node
-        - http.cors.allow-origin=http://localhost:8003
-        - http.cors.enabled=true
+      APP_ENV: dev
+      APP_DEBUG: 1
+      APP_DATABASE_HOST: ${ARTIFAKT_MYSQL_HOST}
+      APP_DATABASE_NAME: ${ARTIFAKT_MYSQL_DATABASE_NAME}
+      APP_DATABASE_USER: ${ARTIFAKT_MYSQL_USER}
+      APP_DATABASE_PASSWORD: ${ARTIFAKT_MYSQL_PASSWORD}
+      PHP_CONF_MEMORY_LIMIT: "-1"
+      PHP_CONF_DATE_TIMEZONE: "Europe/Berlin"
+      PHP_CONF_MAX_EXECUTION_TIME: 180
+      PHP_CONF_OPCACHE_VALIDATE_TIMESTAMP: 1
+    depends_on: 
+      - database
 
+
+volumes: 
+  data:
+  datadir:

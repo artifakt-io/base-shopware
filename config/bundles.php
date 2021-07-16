@@ -14,9 +14,7 @@ return [
     Shopware\Core\Content\Content::class => ['all' => true],
     Shopware\Core\Checkout\Checkout::class => ['all' => true],
     Shopware\Core\Profiling\Profiling::class => ['dev' => true],
-    Shopware\Core\DevOps\DevOps::class => ['all' => true],
     Shopware\Administration\Administration::class => ['all' => true],
-    Shopware\Docs\Docs::class => ['all' => true],
     Shopware\Storefront\Storefront::class => ['all' => true],
     Shopware\Elasticsearch\Elasticsearch::class => ['all' => true],
 ];
