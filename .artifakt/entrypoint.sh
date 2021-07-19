@@ -26,46 +26,22 @@ rm -rf /var/www/html/var/uploads && \
 
 # SHARED FILES
 if [[ -f /data/.env ]]; then 
-    source /data/.env
-    ln -snf /data/.env /var/www/html/
+  source /data/.env
+else
+  touch /data/.env
 fi 
 
-export APP_ENV="prod"
-export APP_SECRET="def000004fe29b08b2dd6e946fec5512124951a50f8b211b7b0adb73671013a8daf35b70f67e94a52bdce17fe4ffcc1d4be7dcdc78ed46d5db9811329a52410de030e473"
-export APP_URL="http://localhost"
-export TRUSTED_PROXIES=0.0.0.0
-export TRUSTED_HOSTS=0.0.0.0
-###< symfony/framework-bundle ###
+ln -snf /data/.env /var/www/html/
 
-###> symfony/swiftmailer-bundle ###
-# For Gmail as a transport, use: "gmail://username:password@localhost"
-# For a generic SMTP server, use: "smtp://localhost:25?encryption=&auth_mode="
-# Delivery is disabled by default via "null://localhost"
-export MAILER_URL=null://localhost
-###< symfony/swiftmailer-bundle ###
-
-export DATABASE_URL="mysql://shopwareuser:shopwarepassword@database:3306/shopware"
-export COMPOSER_HOME="/var/www/html/var/cache/composer"
-export INSTANCE_ID="c5pV4o3q8oxSfCEjioC5EEhVbAte4xGB"
-export BLUE_GREEN_DEPLOYMENT="0"
-export SHOPWARE_HTTP_CACHE_ENABLED="1"
-export SHOPWARE_HTTP_DEFAULT_TTL="7200"
-export SHOPWARE_ES_HOSTS=""
-export SHOPWARE_ES_ENABLED="0"
-export SHOPWARE_ES_INDEXING_ENABLED="0"
-export SHOPWARE_ES_INDEX_PREFIX="sw"
-export SHOPWARE_CDN_STRATEGY_DEFAULT="id"
-
-if [[ ! -f /data/var/bunnycdn_config.yml ]]; then touch /data/var/bunnycdn_config.yml; fi && ln -snf /data/var/bunnycdn_config.yml /var/www/html/var/bunnycdn_config.yml
-if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && ln -snf /data/var/plugins.json /var/www/html/var/plugins.json
-if [[ ! -f /data/public/sw-domain-hash.html ]]; then touch /data/public/sw-domain-hash.html; fi && ln -snf /data/public/sw-domain-hash.html /var/www/html/var/public/sw-domain-hash.html
-if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && ln -snf /data/install.lock /var/www/html/install.lock
-
+if [[ ! -f /data/var/bunnycdn_config.yml ]]; then touch /data/var/bunnycdn_config.yml; fi && ln -snf /data/var/bunnycdn_config.yml /var/www/html/var/
+if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && ln -snf /data/var/plugins.json /var/www/html/var/
+if [[ ! -f /data/public/sw-domain-hash.html ]]; then touch /data/public/sw-domain-hash.html; fi && ln -snf /data/public/sw-domain-hash.html /var/www/html/var/public/
+if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && ln -snf /data/install.lock /var/www/html/
 
 chown -R www-data:www-data /var/www/html
 
 ./bin/build-js.sh
-bin/console cache:clear
+#bin/console cache:clear
 
 #if [[ -f /var/www/html/.env ]]; then source .env; fi
 
