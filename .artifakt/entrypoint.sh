@@ -38,9 +38,9 @@ if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && l
 if [[ ! -f /data/public/sw-domain-hash.html ]]; then touch /data/public/sw-domain-hash.html; fi && ln -snf /data/public/sw-domain-hash.html /var/www/html/var/public/
 if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && ln -snf /data/install.lock /var/www/html/
 
-chown -R www-data:www-data /var/www/html
+chown -R www-data:www-data /var/www/html /data
 
-./bin/build-js.sh
+#./bin/build.sh
 #bin/console cache:clear
 
 #if [[ -f /var/www/html/.env ]]; then source .env; fi
