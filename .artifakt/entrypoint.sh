@@ -25,13 +25,13 @@ rm -rf /var/www/html/var/uploads && \
   chown -R www-data:www-data /data
 
 # SHARED FILES
-if [[ -f /data/.env ]]; then 
-  source /data/.env
-else
+if [[ ! -f /data/.env ]]; then 
   touch /data/.env
 fi 
 
 ln -snf /data/.env /var/www/html/
+
+set -a && . ./.env && set +a
 
 if [[ ! -f /data/var/bunnycdn_config.yml ]]; then touch /data/var/bunnycdn_config.yml; fi && ln -snf /data/var/bunnycdn_config.yml /var/www/html/var/
 if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && ln -snf /data/var/plugins.json /var/www/html/var/
@@ -40,9 +40,12 @@ if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && l
 
 chown -R www-data:www-data /var/www/html /data
 
-#./bin/build.sh
-#bin/console cache:clear
+if [ "mysql -h database -u $APP_DATABASE_USER $APP_DATABASE_NAME -p${APP_DATABASE_PASSWORD} -e 'select count(*) from migration;'" != 0 ];
+then
+  ./bin/build.sh
+fi
 
-#if [[ -f /var/www/html/.env ]]; then source .env; fi
+#
+#bin/console cache:clear
 
 echo ">>>>>>>>>>>>>> END CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "

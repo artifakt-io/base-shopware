@@ -1,7 +1,7 @@
 FROM registry.artifakt.io/php:7.4-apache
 
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt -y install nodejs
+RUN apt -y install nodejs default-mysql-client
 
 ARG CODE_ROOT=.
 
