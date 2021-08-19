@@ -9,8 +9,6 @@ COPY /.artifakt/000-default.conf /etc/apache2/sites-enabled/000-default.conf
 
 COPY --chown=www-data:www-data $CODE_ROOT /var/www/html/
 
-
-
 WORKDIR /var/www/html/
 
 RUN rm .env
@@ -39,4 +37,3 @@ RUN  if [ -f /.artifakt/build.sh ]; then /.artifakt/build.sh; fi
 
 # fix perms/owner
 RUN chown -R www-data:www-data /var/www/html/
-

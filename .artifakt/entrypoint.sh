@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 echo ">>>>>>>>>>>>>> START CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
@@ -8,13 +7,9 @@ echo "------------------------------------------------------------"
 echo "The following build args are available:"
 env
 echo "------------------------------------------------------------"
-echo "Starting composer install"
-composer update && composer install
-echo "End of composer install"
-
 
 echo "Creating all symbolic links"
-PERSISTENT_FOLDER_LIST=("config/jwt" "var/log" "var/queue" "var/public" "public/media" "public/sitemap" "public/thumbnail" "files" "config/packages" "custom/plugins") 
+PERSISTENT_FOLDER_LIST=("config/jwt" "var/log" "var/queue" "var/public" "public/media" "public/sitemap" "public/thumbnail" "files" "config/packages" "custom/plugins" "public/bundles" "public/theme" "var/plugins") 
 for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
   echo Mount $persistent_folder directory
   rm -rf /var/www/html/$persistent_folder && \
@@ -25,11 +20,11 @@ done
 echo "End of symbolic links creation"
 
 is_installed=0
-#check_if_installed=$(echo "SELECT count(*) AS TOTALNUMBEROFTABLES FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'shopware';" | mysql -h database -u $APP_DATABASE_USER $APP_DATABASE_NAME -p${APP_DATABASE_PASSWORD})
-#if [[ $check_if_installed != 0 && $check_if_installed != "" ]]; then
-#  echo "App already installed"
-#  is_installed=1
-#fi
+check_if_installed=$(echo "SELECT count(*) AS TOTALNUMBEROFTABLES FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'shopware';" | mysql -N -h database -u $APP_DATABASE_USER $APP_DATABASE_NAME -p${APP_DATABASE_PASSWORD})
+if [[ $check_if_installed -gt 0 && $check_if_installed != "" ]]; then
+  echo "App already installed"
+  is_installed=1
+fi
 echo "Is installed value: $is_installed"
 if [ $is_installed -eq 0 ]; then 
   echo "Checking if .env file exists"
@@ -56,21 +51,20 @@ echo "------------------------------------------------------------"
 
 echo "Adding bunnycdn_config plugins sw-domain-hash plugins json links"
 
-if [[ ! -f /data/var/bunnycdn_config.yml ]]; then touch /data/var/bunnycdn_config.yml; fi && ln -snf /data/var/bunnycdn_config.yml /var/www/html/var/
-if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && ln -snf /data/var/plugins.json /var/www/html/var/
-if [[ ! -f /data/public/sw-domain-hash.html ]]; then touch /data/public/sw-domain-hash.html; fi && ln -snf /data/public/sw-domain-hash.html /var/www/html/var/public/
-if [[ ! -f /data/var/config_administration_plugins.json ]]; then touch /data/var/config_administration_plugins.json; fi && ln -snf /data/var/config_administration_plugins.json /var/www/html/var/
+#if [[ ! -f /data/var/bunnycdn_config.yml ]]; then touch /data/var/bunnycdn_config.yml; fi && ln -snf /data/var/bunnycdn_config.yml /var/www/html/var/
+#if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && ln -snf /data/var/plugins.json /var/www/html/var/
+#if [[ ! -f /data/public/sw-domain-hash.html ]]; then touch /data/public/sw-domain-hash.html; fi && ln -snf /data/public/sw-domain-hash.html /var/www/html/var/public/
+#if [[ ! -f /data/var/config_administration_plugins.json ]]; then touch /data/var/config_administration_plugins.json; fi && ln -snf /data/var/config_administration_plugins.json /var/www/html/var/
+
+echo "Checking if DB exists - If yes, running build script"
+if [ $is_installed -eq 1 ]; then 
+  echo "Starting build.sh script"
+  ./bin/build.sh
+fi
 
 echo "Changing owner of html"
 chown -R www-data:www-data /var/www/html /data
 
-#echo "Checking if DB exists - If yes, running build script"
-#if [ $is_installed -eq 0 ]; then 
-#  echo "Starting build.sh script"
-#  ./bin/build.sh
-#fi
-
-#
 #bin/console cache:clear
 
 echo ">>>>>>>>>>>>>> END CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
