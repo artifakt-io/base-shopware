@@ -9,7 +9,11 @@ COPY /.artifakt/000-default.conf /etc/apache2/sites-enabled/000-default.conf
 
 COPY --chown=www-data:www-data $CODE_ROOT /var/www/html/
 
+
+
 WORKDIR /var/www/html/
+
+RUN rm .env
 
 # RUN [ -f composer.lock ] && composer install
 # RUN [ -f composer.lock ] && composer install --no-cache --optimize-autoloader --no-interaction --no-ansi --no-dev || true
@@ -31,7 +35,7 @@ RUN mkdir -p /var/log/artifakt && chown www-data:www-data /var/log/artifakt
 # hadolint ignore=SC1091
 #RUN --mount=source=artifakt-custom-build-args,target=/tmp/build-args \
 #  if [ -f /tmp/build-args ]; then source /tmp/build-args; fi && \
-#  if [ -f /.artifakt/build.sh ]; then /.artifakt/build.sh; fi
+RUN  if [ -f /.artifakt/build.sh ]; then /.artifakt/build.sh; fi
 
 # fix perms/owner
 RUN chown -R www-data:www-data /var/www/html/
