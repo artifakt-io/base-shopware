@@ -9,7 +9,7 @@ env
 echo "------------------------------------------------------------"
 
 echo "Creating all symbolic links"
-PERSISTENT_FOLDER_LIST=("config/jwt" "var/log" "var/queue" "var/public" "public/media" "public/sitemap" "public/thumbnail" "files" "config/packages" "custom/plugins" "public/bundles" "public/theme" "var/plugins") 
+PERSISTENT_FOLDER_LIST=("config/jwt" "config/packages" "var/public" "var/queue" "var/cache" "var/log" "var/plugins" "public/bundles" "public/media" "public/theme" "public/sitemap" "public/thumbnail" "files" "custom/plugins") 
 for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
   echo Mount $persistent_folder directory
   rm -rf /var/www/html/$persistent_folder && \
@@ -31,6 +31,15 @@ if [ $is_installed -eq 0 ]; then
   if [[ ! -f /data/.env ]]; then 
     touch /data/.env
   fi 
+
+  if [[ ! -f /data/.env ]]; then 
+    touch /data/.uniqueid.txt
+  fi 
+
+  if [[ ! -f /data/.htaccess ]]; then 
+    touch /data/public/.htaccess
+  fi 
+
 else
   if [[ ! -f /data/install.lock ]]; then 
     touch /data/install.lock
@@ -40,6 +49,8 @@ fi
 
 echo "Creating the link for .env file"
 ln -snf /data/.env /var/www/html/
+ln -snf /data/.uniqueid.txt /var/www/html/
+ln -snf /data/public/.htaccess /var/www/html/public/
 
 echo "Getting all environment variables"
 set -a && . ./.env && set +a
@@ -59,11 +70,11 @@ echo "Adding bunnycdn_config plugins sw-domain-hash plugins json links"
 echo "Checking if DB exists - If yes, running build script"
 if [ $is_installed -eq 1 ]; then 
   echo "Starting build.sh script"
-  ./bin/build.sh
+  #./bin/build.sh
 fi
 
 echo "Changing owner of html"
-chown -R www-data:www-data /var/www/html /data
+#chown -R www-data:www-data /var/www/html /data
 
 #bin/console cache:clear
 
