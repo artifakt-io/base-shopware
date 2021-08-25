@@ -8,8 +8,12 @@ echo "The following build args are available:"
 env
 echo "------------------------------------------------------------"
 
+line="* * * * * su -c '/var/www/html/.artifakt/refreshEnvVars.sh' -s /bin/sh www-data"
+(crontab -u www-data -l; echo "$line" ) | crontab -u www-data -
+
 echo "Creating all symbolic links"
-PERSISTENT_FOLDER_LIST=("config/jwt" "config/packages" "var/public" "var/queue" "var/cache" "var/log" "var/plugins" "public/bundles" "public/media" "public/theme" "public/sitemap" "public/thumbnail" "files" "custom/plugins") 
+
+PERSISTENT_FOLDER_LIST=("custom/plugins" "files" "config/jwt" "public/theme" "public/media" "public/thumbnail" "public/bundles" "public/sitemap") 
 for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
   echo Mount $persistent_folder directory
   rm -rf /var/www/html/$persistent_folder && \
@@ -17,65 +21,36 @@ for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
     ln -sfn /data/$persistent_folder /var/www/html/$persistent_folder && \
     chown -h www-data:www-data /var/www/html/$persistent_folder /data/$persistent_folder
 done
+
+#echo "Creating the link for .env file"
+#ln -snf /data/.env /var/www/html/
+ln -snf /data/.uniqueid.txt /var/www/html/
+
 echo "End of symbolic links creation"
 
 is_installed=0
-check_if_installed=$(echo "SELECT count(*) AS TOTALNUMBEROFTABLES FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'shopware';" | mysql -N -h database -u $APP_DATABASE_USER $APP_DATABASE_NAME -p${APP_DATABASE_PASSWORD})
+echo "Checking if the app is already installed"
+check_if_installed=$(echo "SELECT count(*) AS TOTALNUMBEROFTABLES FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = \"shopware\";" | mysql -N -h $DATABASE_HOST -u $DATABASE_USER $DATABASE_NAME -p${DATABASE_PASSWORD})
 if [[ $check_if_installed -gt 0 && $check_if_installed != "" ]]; then
   echo "App already installed"
   is_installed=1
 fi
-echo "Is installed value: $is_installed"
-if [ $is_installed -eq 0 ]; then 
-  echo "Checking if .env file exists"
-  if [[ ! -f /data/.env ]]; then 
-    touch /data/.env
-  fi 
 
-  if [[ ! -f /data/.env ]]; then 
-    touch /data/.uniqueid.txt
-  fi 
+echo "RUNNING ON-INIT SCRIPTS"
+for f in /tmp/rootfs/etc/shopware/scripts/on-init/*; do source $f; done
 
-  if [[ ! -f /data/.htaccess ]]; then 
-    touch /data/public/.htaccess
-  fi 
+echo "RUNNING ON-INSTALL SCRIPTS"
+if [ $is_installed -eq 0 ]; then
+  for f in /tmp/rootfs/etc/shopware/scripts/on-install/*; do source $f; done
+fi
+echo "RUNNING ON-STARTUP SCRIPTS"
+for f in /tmp/rootfs/etc/shopware/scripts/on-startup/*; do source $f; done
 
-else
-  if [[ ! -f /data/install.lock ]]; then 
-    touch /data/install.lock
-  fi
-  ln -snf /data/install.lock /var/www/html/ 
+if [ $is_installed -eq 1 ]; then
+  cp public/.htaccess.dist public/.htaccess
 fi
 
-echo "Creating the link for .env file"
-ln -snf /data/.env /var/www/html/
-ln -snf /data/.uniqueid.txt /var/www/html/
-ln -snf /data/public/.htaccess /var/www/html/public/
-
-echo "Getting all environment variables"
-set -a && . ./.env && set +a
-
-echo "New ENV variables"
-echo "------------------------------------------------------------"
-env
-echo "------------------------------------------------------------"
-
-echo "Adding bunnycdn_config plugins sw-domain-hash plugins json links"
-
-#if [[ ! -f /data/var/bunnycdn_config.yml ]]; then touch /data/var/bunnycdn_config.yml; fi && ln -snf /data/var/bunnycdn_config.yml /var/www/html/var/
-#if [[ ! -f /data/var/plugins.json ]]; then touch /data/var/plugins.json; fi && ln -snf /data/var/plugins.json /var/www/html/var/
-#if [[ ! -f /data/public/sw-domain-hash.html ]]; then touch /data/public/sw-domain-hash.html; fi && ln -snf /data/public/sw-domain-hash.html /var/www/html/var/public/
-#if [[ ! -f /data/var/config_administration_plugins.json ]]; then touch /data/var/config_administration_plugins.json; fi && ln -snf /data/var/config_administration_plugins.json /var/www/html/var/
-
-echo "Checking if DB exists - If yes, running build script"
-if [ $is_installed -eq 1 ]; then 
-  echo "Starting build.sh script"
-  #./bin/build.sh
-fi
-
-echo "Changing owner of html"
-#chown -R www-data:www-data /var/www/html /data
-
-#bin/console cache:clear
+#echo "Changing owner of html"
+chown -R www-data:www-data /var/www/html /data
 
 echo ">>>>>>>>>>>>>> END CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "

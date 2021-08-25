@@ -9,8 +9,8 @@ echo "The following build args are available:"
 env
 echo "------------------------------------------------------------"
 
-export APP_ENV=prod
-export APP_DEBUG=0
+#export APP_ENV=prod
+#export APP_DEBUG=0
 
 # NO SCRIPTS, it breaks the build
 # see https://stackoverflow.com/a/61349991/1093649
