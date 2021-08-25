@@ -15,7 +15,8 @@ services:
   redis:
     image: 'bitnami/redis:latest'
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes      
+      - ALLOW_EMPTY_PASSWORD=yes    
+        
   app:
     build: .
     image: base-symfony

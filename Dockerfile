@@ -35,7 +35,7 @@ ENV TZ=Europe/Paris \
     PHP_MEMORY_LIMIT=512m 
 
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt -y install nodejs default-mysql-client cron
+RUN apt -y install nodejs default-mysql-client cron netcat
 
 ARG CODE_ROOT=.
 

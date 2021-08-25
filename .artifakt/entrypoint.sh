@@ -8,11 +8,7 @@ echo "The following build args are available:"
 env
 echo "------------------------------------------------------------"
 
-line="* * * * * su -c '/var/www/html/.artifakt/refreshEnvVars.sh' -s /bin/sh www-data"
-(crontab -u www-data -l; echo "$line" ) | crontab -u www-data -
-
 echo "Creating all symbolic links"
-
 PERSISTENT_FOLDER_LIST=("custom/plugins" "files" "config/jwt" "public/theme" "public/media" "public/thumbnail" "public/bundles" "public/sitemap") 
 for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
   echo Mount $persistent_folder directory
@@ -27,6 +23,13 @@ done
 ln -snf /data/.uniqueid.txt /var/www/html/
 
 echo "End of symbolic links creation"
+
+until nc -z -v -w30 $DATABASE_HOST 3306
+do
+  echo "Waiting for database connection..."
+  # wait for 5 seconds before check again
+  sleep 5
+done
 
 is_installed=0
 echo "Checking if the app is already installed"
