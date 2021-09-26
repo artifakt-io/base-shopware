@@ -3,13 +3,18 @@ set -e
 
 echo ">>>>>>>>>>>>>> START CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
 
-echo "------------------------------------------------------------"
-echo "The following build args are available:"
-env
-echo "------------------------------------------------------------"
+# set runtime env. vars on the fly
+export APP_ENV=prod
+export APP_DATABASE_NAME=${ARTIFAKT_MYSQL_DATABASE_NAME:-changeme}
+export APP_DATABASE_USER=${ARTIFAKT_MYSQL_USER:-changeme}
+export APP_DATABASE_PASSWORD=${ARTIFAKT_MYSQL_PASSWORD:-changeme}
+export APP_DATABASE_HOST=${ARTIFAKT_MYSQL_HOST:-mysql}
+export APP_DATABASE_PORT=${ARTIFAKT_MYSQL_PORT:-3306}
+
+export DATABASE_URL=mysql://$ARTIFAKT_MYSQL_USER:$ARTIFAKT_MYSQL_PASSWORD@$ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT/$ARTIFAKT_MYSQL_DATABASE_NAME
 
 echo "Creating all symbolic links"
-PERSISTENT_FOLDER_LIST=("custom/plugins" "files" "config/jwt" "public/theme" "public/media" "public/thumbnail" "public/bundles" "public/sitemap") 
+PERSISTENT_FOLDER_LIST=("custom/plugins" "files" "config/jwt" "public/theme" "public/media" "public/thumbnail" "public/bundles" "public/sitemap")
 for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
   echo Mount $persistent_folder directory
   rm -rf /var/www/html/$persistent_folder && \
@@ -24,9 +29,9 @@ ln -snf /data/.uniqueid.txt /var/www/html/
 
 echo "End of symbolic links creation"
 
-until nc -z -v -w30 $DATABASE_HOST 3306
+until nc -z -v -w30 $ARTIFAKT_MYSQL_HOST $ARTIFAKT_MYSQL_PORT
 do
-  echo "Waiting for database connection..."
+  echo "Waiting for database connection on $ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT"
   # wait for 5 seconds before check again
   sleep 5
 done
