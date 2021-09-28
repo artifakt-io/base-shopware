@@ -96,5 +96,7 @@ composer install
 if [[ "$IS_INSTALLED" == "true" ]]; then
    bin/console cache:clear
    rm -rf var/cache/*
+   bin/console assets:install --env=prod
    bin/console theme:compile --env=prod
+   
 fi
