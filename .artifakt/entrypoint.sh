@@ -38,7 +38,7 @@ done
 
 is_installed=0
 echo "Checking if the app is already installed"
-check_if_installed=$(echo "SELECT count(*) AS TOTALNUMBEROFTABLES FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = \"shopware\";" | mysql -N -h $ARTIFAKT_MYSQL_HOST -u $ARTIFAKT_MYSQL_USER $ARTIFAKT_MYSQL_DATABASE_NAME -p${ARTIFAKT_MYSQL_PASSWORD})
+check_if_installed=$(echo "SELECT count(*) AS TOTALNUMBEROFTABLES FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = \"$ARTIFAKT_MYSQL_DATABASE_NAME\";" | mysql -N -h $ARTIFAKT_MYSQL_HOST -u $ARTIFAKT_MYSQL_USER -p${ARTIFAKT_MYSQL_PASSWORD})
 if [[ $check_if_installed -gt 0 && $check_if_installed != "" ]]; then
   echo "App already installed"
   is_installed=1
