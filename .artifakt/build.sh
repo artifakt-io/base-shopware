@@ -15,6 +15,8 @@ mkdir /state && \
 	touch /var/www/html/install.lock && \
 	echo $SHOPWARE_VERSION > /shopware_version
 
+cp /.artifakt/000-default.conf /etc/apache2/sites-available/
+
 cp -rp /.artifakt/shopware/rootfs /tmp/
 
 chown -R www-data:www-data ./vendor ./install.lock /tmp/rootfs
