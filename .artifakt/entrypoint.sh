@@ -3,7 +3,7 @@ set -e
 
 echo ">>>>>>>>>>>>>> START CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
 
-if [[ -f /data/.env ]]; then
+if [[ -f "/data/.env" ]]; then
 
 # set runtime env. vars on the fly
 cat << EOF > /data/.env
