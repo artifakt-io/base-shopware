@@ -3,17 +3,25 @@ set -e
 
 echo ">>>>>>>>>>>>>> START CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
 
+if [[ -f /data/.env ]]; then
+
 # set runtime env. vars on the fly
-export APP_ENV=prod
-export APP_DATABASE_NAME=${ARTIFAKT_MYSQL_DATABASE_NAME:-changeme}
-export APP_DATABASE_USER=${ARTIFAKT_MYSQL_USER:-changeme}
-export APP_DATABASE_PASSWORD=${ARTIFAKT_MYSQL_PASSWORD:-changeme}
-export APP_DATABASE_HOST=${ARTIFAKT_MYSQL_HOST:-mysql}
-export APP_DATABASE_PORT=${ARTIFAKT_MYSQL_PORT:-3306}
+cat << EOF > /data/.env
+APP_ENV=prod
+APP_DATABASE_NAME=${ARTIFAKT_MYSQL_DATABASE_NAME:-changeme}
+APP_DATABASE_USER=${ARTIFAKT_MYSQL_USER:-changeme}
+APP_DATABASE_PASSWORD=${ARTIFAKT_MYSQL_PASSWORD:-changeme}
+APP_DATABASE_HOST=${ARTIFAKT_MYSQL_HOST:-mysql}
+APP_DATABASE_PORT=${ARTIFAKT_MYSQL_PORT:-3306}
+DATABASE_URL=mysql://$ARTIFAKT_MYSQL_USER:$ARTIFAKT_MYSQL_PASSWORD@$ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT/$ARTIFAKT_MYSQL_DATABASE_NAME
+EOF
 
-export DATABASE_URL=mysql://$ARTIFAKT_MYSQL_USER:$ARTIFAKT_MYSQL_PASSWORD@$ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT/$ARTIFAKT_MYSQL_DATABASE_NAME
+fi
 
-echo "Creating all symbolic links"
+#echo "Creating the link for .env file"
+ln -snf /data/.env /var/www/html/
+
+ echo "Creating all symbolic links"
 PERSISTENT_FOLDER_LIST=("custom/plugins" "files" "config/jwt" "public/theme" "public/media" "public/thumbnail" "public/bundles" "public/sitemap")
 for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
   echo Mount $persistent_folder directory
@@ -23,8 +31,6 @@ for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
     chown -h www-data:www-data /var/www/html/$persistent_folder /data/$persistent_folder
 done
 
-#echo "Creating the link for .env file"
-#ln -snf /data/.env /var/www/html/
 ln -snf /data/.uniqueid.txt /var/www/html/
 
 echo "End of symbolic links creation"
