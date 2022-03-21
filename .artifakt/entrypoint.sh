@@ -3,7 +3,7 @@ set -e
 
 echo ">>>>>>>>>>>>>> START CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
 
-if [[ -f "/data/.env" ]]; then
+if [[ ! -f "/data/.env" ]]; then
 
 # set runtime env. vars on the fly
 cat << EOF > /data/.env
@@ -16,10 +16,10 @@ APP_DATABASE_PORT=${ARTIFAKT_MYSQL_PORT:-3306}
 DATABASE_URL=mysql://$ARTIFAKT_MYSQL_USER:$ARTIFAKT_MYSQL_PASSWORD@$ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT/$ARTIFAKT_MYSQL_DATABASE_NAME
 EOF
 
-fi
-
 #echo "Creating the link for .env file"
 ln -snf /data/.env /var/www/html/
+
+fi
 
  echo "Creating all symbolic links"
 PERSISTENT_FOLDER_LIST=("custom/plugins" "files" "config/jwt" "public/theme" "public/media" "public/thumbnail" "public/bundles" "public/sitemap")
