@@ -5,19 +5,19 @@ echo ">>>>>>>>>>>>>> START CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
 
 if [[ ! -f "/data/.env" ]]; then
 
-# set runtime env. vars on the fly
-cat << EOF > /data/.env
-APP_ENV=prod
-APP_DATABASE_NAME=${ARTIFAKT_MYSQL_DATABASE_NAME:-changeme}
-APP_DATABASE_USER=${ARTIFAKT_MYSQL_USER:-changeme}
-APP_DATABASE_PASSWORD=${ARTIFAKT_MYSQL_PASSWORD:-changeme}
-APP_DATABASE_HOST=${ARTIFAKT_MYSQL_HOST:-mysql}
-APP_DATABASE_PORT=${ARTIFAKT_MYSQL_PORT:-3306}
-DATABASE_URL=mysql://$ARTIFAKT_MYSQL_USER:$ARTIFAKT_MYSQL_PASSWORD@$ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT/$ARTIFAKT_MYSQL_DATABASE_NAME
+  # set runtime env. vars on the fly
+  cat << EOF > /data/.env
+  APP_ENV=prod
+  APP_DATABASE_NAME=${ARTIFAKT_MYSQL_DATABASE_NAME:-changeme}
+  APP_DATABASE_USER=${ARTIFAKT_MYSQL_USER:-changeme}
+  APP_DATABASE_PASSWORD=${ARTIFAKT_MYSQL_PASSWORD:-changeme}
+  APP_DATABASE_HOST=${ARTIFAKT_MYSQL_HOST:-mysql}
+  APP_DATABASE_PORT=${ARTIFAKT_MYSQL_PORT:-3306}
+  DATABASE_URL=mysql://$ARTIFAKT_MYSQL_USER:$ARTIFAKT_MYSQL_PASSWORD@$ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT/$ARTIFAKT_MYSQL_DATABASE_NAME
 EOF
 
-echo "Adding symlink for .env file"
-ln -snf /data/.env /var/www/html/
+  echo "Adding symlink for .env file"
+  ln -snf /data/.env /var/www/html/
 
 fi
 
