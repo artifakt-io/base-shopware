@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+unset APP_ENV
+unset APP_DEBUG
+
 echo ">>>>>>>>>>>>>> START CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
 
 if [[ ! -f "/data/.env" ]]; then
