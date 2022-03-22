@@ -16,7 +16,7 @@ APP_DATABASE_PORT=${ARTIFAKT_MYSQL_PORT:-3306}
 DATABASE_URL=mysql://$ARTIFAKT_MYSQL_USER:$ARTIFAKT_MYSQL_PASSWORD@$ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT/$ARTIFAKT_MYSQL_DATABASE_NAME
 EOF
 
-#echo "Creating the link for .env file"
+echo "Adding symlink for .env file"
 ln -snf /data/.env /var/www/html/
 
 fi
@@ -31,6 +31,7 @@ for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
     chown -h www-data:www-data /var/www/html/$persistent_folder /data/$persistent_folder
 done
 
+echo "Adding symlink for uniqueid file"
 ln -snf /data/.uniqueid.txt /var/www/html/
 
 echo "End of symbolic links creation"
@@ -64,7 +65,7 @@ if [ $is_installed -eq 1 ]; then
   cp public/.htaccess.dist public/.htaccess
 fi
 
-#echo "Changing owner of html"
+echo "Changing owner of html to www-data"
 chown -R www-data:www-data /var/www/html /data
 
 echo ">>>>>>>>>>>>>> END CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
