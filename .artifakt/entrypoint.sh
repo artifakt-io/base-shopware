@@ -21,21 +21,6 @@ ln -snf /data/.env /var/www/html/
 
 fi
 
- echo "Creating all symbolic links"
-PERSISTENT_FOLDER_LIST=("custom/plugins" "files" "config/jwt" "public/theme" "public/media" "public/thumbnail" "public/bundles" "public/sitemap")
-for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
-  echo Mount $persistent_folder directory
-  rm -rf /var/www/html/$persistent_folder && \
-    mkdir -p /data/$persistent_folder && \
-    ln -sfn /data/$persistent_folder /var/www/html/$persistent_folder && \
-    chown -h www-data:www-data /var/www/html/$persistent_folder /data/$persistent_folder
-done
-
-echo "Adding symlink for uniqueid file"
-ln -snf /data/.uniqueid.txt /var/www/html/
-
-echo "End of symbolic links creation"
-
 until nc -z -v -w30 $ARTIFAKT_MYSQL_HOST $ARTIFAKT_MYSQL_PORT
 do
   echo "Waiting for database connection on $ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT"
