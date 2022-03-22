@@ -9,7 +9,9 @@ use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\Language\Exception\LanguageNotFoundException;
 
-$params = parse_url(getenv('DATABASE_URL'));
+$dotenv=parse_ini_file('/var/www/html/.env', false, INI_SCANNER_RAW);
+$params = parse_url($dotenv['DATABASE_URL']);
+
 $dbName = substr($params['path'], 1);
 
 $dsnWithoutDb = sprintf(

@@ -3,31 +3,23 @@ set -e
 
 echo ">>>>>>>>>>>>>> START CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
 
-# set runtime env. vars on the fly
-export APP_ENV=prod
-export APP_DATABASE_NAME=${ARTIFAKT_MYSQL_DATABASE_NAME:-changeme}
-export APP_DATABASE_USER=${ARTIFAKT_MYSQL_USER:-changeme}
-export APP_DATABASE_PASSWORD=${ARTIFAKT_MYSQL_PASSWORD:-changeme}
-export APP_DATABASE_HOST=${ARTIFAKT_MYSQL_HOST:-mysql}
-export APP_DATABASE_PORT=${ARTIFAKT_MYSQL_PORT:-3306}
+if [[ ! -f "/data/.env" ]]; then
 
-export DATABASE_URL=mysql://$ARTIFAKT_MYSQL_USER:$ARTIFAKT_MYSQL_PASSWORD@$ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT/$ARTIFAKT_MYSQL_DATABASE_NAME
+  # set runtime env. vars on the fly
+  cat << EOF > /data/.env
+  APP_ENV=prod
+  APP_DATABASE_NAME=${ARTIFAKT_MYSQL_DATABASE_NAME:-changeme}
+  APP_DATABASE_USER=${ARTIFAKT_MYSQL_USER:-changeme}
+  APP_DATABASE_PASSWORD=${ARTIFAKT_MYSQL_PASSWORD:-changeme}
+  APP_DATABASE_HOST=${ARTIFAKT_MYSQL_HOST:-mysql}
+  APP_DATABASE_PORT=${ARTIFAKT_MYSQL_PORT:-3306}
+  DATABASE_URL=mysql://$ARTIFAKT_MYSQL_USER:$ARTIFAKT_MYSQL_PASSWORD@$ARTIFAKT_MYSQL_HOST:$ARTIFAKT_MYSQL_PORT/$ARTIFAKT_MYSQL_DATABASE_NAME
+EOF
 
-echo "Creating all symbolic links"
-PERSISTENT_FOLDER_LIST=("custom/plugins" "files" "config/jwt" "public/theme" "public/media" "public/thumbnail" "public/bundles" "public/sitemap")
-for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
-  echo Mount $persistent_folder directory
-  rm -rf /var/www/html/$persistent_folder && \
-    mkdir -p /data/$persistent_folder && \
-    ln -sfn /data/$persistent_folder /var/www/html/$persistent_folder && \
-    chown -h www-data:www-data /var/www/html/$persistent_folder /data/$persistent_folder
-done
+  echo "Adding symlink for .env file"
+  ln -snf /data/.env /var/www/html/
 
-#echo "Creating the link for .env file"
-#ln -snf /data/.env /var/www/html/
-ln -snf /data/.uniqueid.txt /var/www/html/
-
-echo "End of symbolic links creation"
+fi
 
 until nc -z -v -w30 $ARTIFAKT_MYSQL_HOST $ARTIFAKT_MYSQL_PORT
 do
@@ -58,7 +50,7 @@ if [ $is_installed -eq 1 ]; then
   cp public/.htaccess.dist public/.htaccess
 fi
 
-#echo "Changing owner of html"
+echo "Changing owner of html to www-data"
 chown -R www-data:www-data /var/www/html /data
 
 echo ">>>>>>>>>>>>>> END CUSTOM ENTRYPOINT SCRIPT <<<<<<<<<<<<<<<<< "
